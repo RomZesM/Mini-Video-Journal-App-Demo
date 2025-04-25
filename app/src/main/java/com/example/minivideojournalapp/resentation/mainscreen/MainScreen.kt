@@ -4,10 +4,13 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.provider.MediaStore
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,6 +24,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -45,7 +49,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -53,8 +60,11 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
+import com.example.minivideojournalapp.R
 import com.example.minivideojournalapp.domain.models.Video
 import org.koin.androidx.compose.koinViewModel
+import java.io.File
+import java.io.FileInputStream
 
 @Composable
 fun MainScreen() {
@@ -128,16 +138,26 @@ fun MainScreen() {
 		currentlyPlayingId = currentlyPlayingId
 	)
 
-	if(isVideoWasJustCreated){
+	if (isVideoWasJustCreated) {
 		EditDescriptionDialog(
 			currentDescription = pendingDescription ?: "",
 			onConfirm = { newDescription ->
 				pendingDescription = newDescription
-				viewModel.addVideo(null, pendingVideoPath ?: "", pendingDescription ?: "", pendingCreatedAt ?: 0)
+				viewModel.addVideo(
+					null,
+					pendingVideoPath ?: "",
+					pendingDescription ?: "",
+					pendingCreatedAt ?: 0
+				)
 				isVideoWasJustCreated = false
 			},
 			onDismiss = {
-				viewModel.addVideo(null, pendingVideoPath ?: "", pendingDescription ?: "", pendingCreatedAt ?: 0)
+				viewModel.addVideo(
+					null,
+					pendingVideoPath ?: "",
+					pendingDescription ?: "",
+					pendingCreatedAt ?: 0
+				)
 				isVideoWasJustCreated = false
 			},
 		)
@@ -154,6 +174,7 @@ fun MainScreen() {
 		)
 	}
 }
+
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -192,71 +213,65 @@ fun CameraScreenContent(
 					shape = RoundedCornerShape(12.dp)
 				) {
 					Column(modifier = Modifier.padding(8.dp)) {
+						Column(modifier = Modifier.padding(8.dp)) {
 
-						Card(
-							modifier = Modifier
-								.padding(8.dp)
-								.fillMaxWidth(),
-							elevation = CardDefaults.cardElevation(4.dp),
-							shape = RoundedCornerShape(12.dp)
-						) {
-							Column(modifier = Modifier.padding(8.dp)) {
-
-								if (currentlyPlayingId == video.id) {
-									Box(
-										modifier = Modifier
-											.fillMaxWidth()
-											.aspectRatio(16f / 9f)
-											.clip(RoundedCornerShape(12.dp))
-									) {
-										AndroidView(
-											modifier = Modifier.align(Alignment.Center),
-											factory = {
-												PlayerView(it).apply {
-													useController = true
-													player = exoPlayer
-												}
-											},
-										)
-									}
-
-								} else {
-									Box(
-										modifier = Modifier
-											.fillMaxSize()
-											.height(100.dp)
-											.background(Color.Black)
-											.clickable { onPlayClicked(video) }
-									) {
-										Text(video.thumbnailPath)
-									}
-								}
-
-								Spacer(Modifier.height(8.dp))
-
-								Row(
-									modifier = Modifier.fillMaxWidth(),
-									horizontalArrangement = Arrangement.SpaceBetween,
-									verticalAlignment = Alignment.CenterVertically
+							if (currentlyPlayingId == video.id) {
+								Box(
+									modifier = Modifier
+										.fillMaxWidth()
+										.aspectRatio(16f / 9f)
+										.clip(RoundedCornerShape(12.dp))
 								) {
-									Text(
-										text = video.description,
-										fontWeight = FontWeight.Bold
-									)
-									IconButton(
-										onClick = {
-											onEditButtonClick(index)
+									AndroidView(
+										modifier = Modifier
+											.align(Alignment.Center)
+											.height(150.dp),
+										factory = {
+											PlayerView(it).apply {
+												useController = true
+												player = exoPlayer
+											}
 										},
-										modifier = Modifier.size(24.dp)
-									) {
-										Icon(
-											Icons.Default.Create,
-											contentDescription = "Edit description"
-										)
-									}
+									)
 								}
 
+							} else {
+								Box(
+									contentAlignment = Alignment.Center,
+									modifier = Modifier
+										.fillMaxSize()
+										.height(146.dp)
+										.background(Color.Black)
+										.clickable { onPlayClicked(video) }
+								) {
+									DisplayImageFromInternalStorage(video)
+								}
 							}
+
+							Spacer(Modifier.height(8.dp))
+
+							Row(
+								modifier = Modifier.fillMaxWidth(),
+								horizontalArrangement = Arrangement.SpaceBetween,
+								verticalAlignment = Alignment.CenterVertically
+							) {
+								Text(
+									text = video.description,
+									fontWeight = FontWeight.Bold
+								)
+								IconButton(
+									onClick = {
+										onEditButtonClick(index)
+									},
+									modifier = Modifier.size(24.dp)
+								) {
+									Icon(
+										Icons.Default.Create,
+										contentDescription = "Edit description"
+									)
+								}
+							}
+
 						}
 					}
 				}
@@ -265,6 +280,26 @@ fun CameraScreenContent(
 	}
 }
 
+@Composable
+fun DisplayImageFromInternalStorage(video: Video) {
+	val bitmap: Bitmap? = try {
+		val file = File(video.thumbnailPath)
+		BitmapFactory.decodeStream(FileInputStream(file))
+	} catch (e: Exception) {
+		e.printStackTrace()
+		null
+	}
+
+	bitmap?.let {
+		Image(
+			painter = BitmapPainter(it.asImageBitmap()),
+			contentDescription = video.description,
+			modifier = Modifier.wrapContentSize(Alignment.Center)
+		)
+	} ?: run {
+		Text(stringResource(R.string.image_not_found))
+	}
+}
 
 fun getPathFromUri(context: Context, uri: Uri): String? {
 	val projection = arrayOf(MediaStore.Video.Media.DATA)
@@ -282,9 +317,9 @@ fun getPathFromUri(context: Context, uri: Uri): String? {
 fun CameraScreenPreview() {
 	CameraScreenContent(
 		videos = listOf(
-			Video(123, "path1", "description1", "description" ,1234567890),
-			Video(456, "path2", "description2", "description",9876543210),
-			Video(789, "path3", "description3", "description",5432109876)
+			Video(123, "path1", "description1", "description", 1234567890),
+			Video(456, "path2", "description2", "description", 9876543210),
+			Video(789, "path3", "description3", "description", 5432109876)
 		),
 		floatButtonOnClick = {},
 		onEditButtonClick = {},
@@ -293,4 +328,7 @@ fun CameraScreenPreview() {
 		null
 	)
 }
+
+
+
 
