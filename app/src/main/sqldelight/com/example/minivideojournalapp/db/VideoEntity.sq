@@ -2,6 +2,7 @@ CREATE TABLE videoEntity (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     videoPath TEXT NOT NULL,
     description TEXT,
+    thumbnailPath TEXT NOT NULL,
     createdAt INTEGER NOT NULL
 );
 
@@ -16,7 +17,7 @@ SELECT * FROM videoEntity WHERE id = :id;
 insertVideo:
 INSERT OR REPLACE
 INTO videoEntity
-VALUES (?, ?, ?, ?);
+VALUES (?, ?, ?, ?, ?);
 
 deleteVideo:
 DELETE FROM videoEntity

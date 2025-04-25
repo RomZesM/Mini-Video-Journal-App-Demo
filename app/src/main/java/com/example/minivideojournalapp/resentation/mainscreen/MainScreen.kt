@@ -228,7 +228,7 @@ fun CameraScreenContent(
 											.background(Color.Black)
 											.clickable { onPlayClicked(video) }
 									) {
-										Text("Thumbnails")
+										Text(video.thumbnailPath)
 									}
 								}
 
@@ -282,9 +282,9 @@ fun getPathFromUri(context: Context, uri: Uri): String? {
 fun CameraScreenPreview() {
 	CameraScreenContent(
 		videos = listOf(
-			Video(123, "path1", "description1", 1234567890),
-			Video(456, "path2", "description2", 9876543210),
-			Video(789, "path3", "description3", 5432109876)
+			Video(123, "path1", "description1", "description" ,1234567890),
+			Video(456, "path2", "description2", "description",9876543210),
+			Video(789, "path3", "description3", "description",5432109876)
 		),
 		floatButtonOnClick = {},
 		onEditButtonClick = {},

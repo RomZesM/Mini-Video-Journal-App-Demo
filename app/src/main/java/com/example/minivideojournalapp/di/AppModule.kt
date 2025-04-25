@@ -25,7 +25,7 @@ val appModule = module {
 	}
 
 	single<VideoRepository> {
-		VideoRepositoryImpl(VideoDB(get()))
+		VideoRepositoryImpl(VideoDB(get()), androidContext())
 	}
 
 	single<GetAllVideosUseCase>{
