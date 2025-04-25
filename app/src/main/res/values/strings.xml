@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Mini Video Journal App</string>
+    <string name="permission_alert_permission_needed_title">Permission Needed</string>
+    <string name="permission_alert_permission_needed_message">This app needs permission to access your video files.</string>"
+    <string name="permission_alert_button_title_allow">Allow</string>"
+    <string name="permission_alert_button_title_cancel">Cancel</string>"
+
 </resources>

@@ -1,29 +1,40 @@
 package com.example.minivideojournalapp
 
+import android.Manifest
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import com.example.minivideojournalapp.resentation.common.MediaPermissionRequestAlert
+import com.example.minivideojournalapp.resentation.mainscreen.MainScreen
 import com.example.minivideojournalapp.ui.theme.MiniVideoJournalAppTheme
 
 class MainActivity : ComponentActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		enableEdgeToEdge()
+
+		requestPermissions(
+			arrayOf(
+				Manifest.permission.CAMERA,
+				Manifest.permission.RECORD_AUDIO,
+				Manifest.permission.READ_EXTERNAL_STORAGE
+			),
+			0
+		)
+
+
+
 		setContent {
 			MiniVideoJournalAppTheme {
-				Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-					Greeting(
-						name = "Android",
-						modifier = Modifier.padding(innerPadding)
-					)
+				Surface(modifier = Modifier.fillMaxSize()) {
+					CheckPermission()
 				}
 			}
 		}
@@ -31,17 +42,16 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-	Text(
-		text = "Hello $name!",
-		modifier = modifier
-	)
-}
+fun CheckPermission() {
+	var hasPermission by remember { mutableStateOf(false) }
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-	MiniVideoJournalAppTheme {
-		Greeting("Android")
+	MediaPermissionRequestAlert(
+		onGranted = {
+			hasPermission = true
+		}
+	)
+
+	if (hasPermission) {
+		MainScreen()
 	}
 }
