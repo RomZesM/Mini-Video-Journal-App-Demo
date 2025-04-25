@@ -4,5 +4,4 @@
     <string name="permission_alert_permission_needed_message">This app needs permission to access your video files.</string>"
     <string name="permission_alert_button_title_allow">Allow</string>"
     <string name="permission_alert_button_title_cancel">Cancel</string>"
-
 </resources>

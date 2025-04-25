@@ -29,8 +29,6 @@ class MainActivity : ComponentActivity() {
 			0
 		)
 
-
-
 		setContent {
 			MiniVideoJournalAppTheme {
 				Surface(modifier = Modifier.fillMaxSize()) {
