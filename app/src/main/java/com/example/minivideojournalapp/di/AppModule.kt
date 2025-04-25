@@ -3,9 +3,11 @@ package com.example.minivideojournalapp.di
 
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
-import com.example.minivideojournalapp.data.VideoDataSource
-import com.example.minivideojournalapp.data.VideoDataSourceImpl
+import com.example.minivideojournalapp.data.VideoRepositoryImpl
 import com.example.minivideojournalapp.db.VideoDB
+import com.example.minivideojournalapp.domain.repositories.VideoRepository
+import com.example.minivideojournalapp.domain.usecases.GetAllVideosUseCase
+import com.example.minivideojournalapp.domain.usecases.SaveVideoIntoDataBaseUseCase
 import com.example.minivideojournalapp.resentation.mainscreen.MainScreenViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel
@@ -21,11 +23,19 @@ val appModule = module {
 		)
 	}
 
-	single<VideoDataSource> {
-		VideoDataSourceImpl(VideoDB(get()))
+	single<VideoRepository> {
+		VideoRepositoryImpl(VideoDB(get()))
+	}
+
+	single<GetAllVideosUseCase>{
+		GetAllVideosUseCase(get())
+	}
+
+	single<SaveVideoIntoDataBaseUseCase>{
+		SaveVideoIntoDataBaseUseCase(get())
 	}
 
 	viewModel {
-		MainScreenViewModel(get())
+		MainScreenViewModel(get(), get())
 	}
 }

@@ -37,7 +37,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.minivideojournalapp.db.VideoEntity
+import com.example.minivideojournalapp.domain.models.Video
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -48,7 +48,7 @@ fun MainScreen() {
 
 	val context = LocalContext.current
 
-	val videos = viewModel._videos.collectAsState(initial = emptyList())
+	val videos = viewModel.videos.collectAsState(initial = emptyList())
 
 
 	val launcher = rememberLauncherForActivityResult(
@@ -78,7 +78,7 @@ fun MainScreen() {
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun CameraScreenContent(
-	videos: List<VideoEntity>,
+	videos: List<Video>,
 	floatButtonOnClick: (Intent) -> Unit,
 ) {
 	Scaffold(
@@ -156,8 +156,9 @@ private fun getPathFromUri(context: Context, uri: Uri): String? {
 fun CameraScreenPreview() {
 	CameraScreenContent(
 		videos = listOf(
-			VideoEntity(1, "video1.mp4", "Description 1", 11125L),
-			VideoEntity(2, "video2.mp4", "Description 2", 121321L)
+			Video(123, "path1", "description1", 1234567890),
+			Video(456, "path2", "description2", 9876543210),
+			Video(789, "path3", "description3", 5432109876)
 		),
 		floatButtonOnClick = {},
 	)
