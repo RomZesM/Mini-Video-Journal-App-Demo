@@ -90,3 +90,12 @@ dependencies {
 
 }
 
+sqldelight {
+	databases {
+		create("VideoDB") {
+			packageName.set("com.example.minivideojournalapp.db")
+			srcDirs.setFrom("src/main/sqldelight")
+		}
+	}
+}
+

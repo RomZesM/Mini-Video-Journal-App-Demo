@@ -1,0 +1,28 @@
+CREATE TABLE videoEntity (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    videoPath TEXT NOT NULL,
+    description TEXT,
+    createdAt INTEGER NOT NULL
+);
+
+selectAllVideos:
+SELECT * FROM videoEntity
+ORDER BY createdAt DESC
+;
+
+selectVideoById:
+SELECT * FROM videoEntity WHERE id = :id;
+
+insertVideo:
+INSERT OR REPLACE
+INTO videoEntity
+VALUES (?, ?, ?, ?);
+
+deleteVideo:
+DELETE FROM videoEntity
+WHERE id = :id;
+
+updateDescription:
+UPDATE videoEntity
+SET description = :description
+WHERE id = :id;
