@@ -20,20 +20,24 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -63,6 +67,10 @@ fun MainScreen() {
 	val videos = viewModel.videos.collectAsState(initial = emptyList())
 
 	var currentlyPlayingId by remember { mutableStateOf<Long?>(null) }
+
+	var videosIndexForEditing by remember { mutableIntStateOf(0) }
+
+	var isEditingDescription by remember { mutableStateOf(false) }
 
 	val exoPlayer = remember() {
 		ExoPlayer.Builder(context).build().apply {
@@ -95,9 +103,14 @@ fun MainScreen() {
 		}
 	}
 
+
 	CameraScreenContent(
 		videos = videos.value,
 		floatButtonOnClick = { videoIntent -> launcher.launch(videoIntent) },
+		onEditButtonClick = { videoIndex ->
+			isEditingDescription = true
+			videosIndexForEditing = videoIndex
+		},
 		exoPlayer = exoPlayer,
 		onPlayClicked = { video ->
 			currentlyPlayingId = video.id
@@ -108,6 +121,17 @@ fun MainScreen() {
 		},
 		currentlyPlayingId = currentlyPlayingId
 	)
+
+	if (isEditingDescription) {
+		EditDescriptionDialog(
+			currentDescription = videos.value[videosIndexForEditing].description ?: "",
+			onConfirm = { newDescription ->
+				viewModel.updateDescription(videos.value[videosIndexForEditing].id, newDescription)
+				isEditingDescription = false
+			},
+			onDismiss = { isEditingDescription = false }
+		)
+	}
 }
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -115,6 +139,7 @@ fun MainScreen() {
 fun CameraScreenContent(
 	videos: List<Video>,
 	floatButtonOnClick: (Intent) -> Unit,
+	onEditButtonClick: (Int) -> Unit,
 	exoPlayer: ExoPlayer,
 	onPlayClicked: (Video) -> Unit,
 	currentlyPlayingId: Long?
@@ -197,6 +222,17 @@ fun CameraScreenContent(
 										text = video.description,
 										fontWeight = FontWeight.Bold
 									)
+									IconButton(
+										onClick = {
+											onEditButtonClick(index)
+										},
+										modifier = Modifier.size(24.dp)
+									) {
+										Icon(
+											Icons.Default.Create,
+											contentDescription = "Edit description"
+										)
+									}
 								}
 
 							}
@@ -230,10 +266,10 @@ fun CameraScreenPreview() {
 			Video(789, "path3", "description3", 5432109876)
 		),
 		floatButtonOnClick = {},
+		onEditButtonClick = {},
 		exoPlayer = ExoPlayer.Builder(LocalContext.current).build(),
 		onPlayClicked = {},
 		null
 	)
 }
-
 

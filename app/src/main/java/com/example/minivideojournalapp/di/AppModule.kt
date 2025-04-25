@@ -6,6 +6,7 @@ import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import com.example.minivideojournalapp.data.VideoRepositoryImpl
 import com.example.minivideojournalapp.db.VideoDB
 import com.example.minivideojournalapp.domain.repositories.VideoRepository
+import com.example.minivideojournalapp.domain.usecases.UpdateVideoDescriptionUseCase
 import com.example.minivideojournalapp.domain.usecases.GetAllVideosUseCase
 import com.example.minivideojournalapp.domain.usecases.SaveVideoIntoDataBaseUseCase
 import com.example.minivideojournalapp.resentation.mainscreen.MainScreenViewModel
@@ -35,7 +36,11 @@ val appModule = module {
 		SaveVideoIntoDataBaseUseCase(get())
 	}
 
+	single<UpdateVideoDescriptionUseCase>{
+		UpdateVideoDescriptionUseCase(get())
+	}
+
 	viewModel {
-		MainScreenViewModel(get(), get())
+		MainScreenViewModel(get(), get(), get())
 	}
 }
