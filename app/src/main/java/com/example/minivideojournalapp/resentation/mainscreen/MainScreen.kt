@@ -72,6 +72,14 @@ fun MainScreen() {
 
 	var isEditingDescription by remember { mutableStateOf(false) }
 
+	var isVideoWasJustCreated by remember { mutableStateOf(false) }
+
+	var pendingVideoPath by remember { mutableStateOf<String?>(null) }
+
+	var pendingCreatedAt by remember { mutableStateOf<Long?>(null) }
+
+	var pendingDescription by remember { mutableStateOf<String?>(null) }
+
 	val exoPlayer = remember() {
 		ExoPlayer.Builder(context).build().apply {
 			prepare()
@@ -93,12 +101,10 @@ fun MainScreen() {
 			val path = getPathFromUri(context, uri)
 			val createdAt = System.currentTimeMillis()
 			if (path != null) {
-				viewModel.addVideo(
-					null,
-					path,
-					"Recorded at $createdAt",
-					createdAt
-				)
+				pendingDescription = "Recorded at $createdAt"
+				pendingVideoPath = path
+				pendingCreatedAt = createdAt
+				isVideoWasJustCreated = true
 			}
 		}
 	}
@@ -121,6 +127,21 @@ fun MainScreen() {
 		},
 		currentlyPlayingId = currentlyPlayingId
 	)
+
+	if(isVideoWasJustCreated){
+		EditDescriptionDialog(
+			currentDescription = pendingDescription ?: "",
+			onConfirm = { newDescription ->
+				pendingDescription = newDescription
+				viewModel.addVideo(null, pendingVideoPath ?: "", pendingDescription ?: "", pendingCreatedAt ?: 0)
+				isVideoWasJustCreated = false
+			},
+			onDismiss = {
+				viewModel.addVideo(null, pendingVideoPath ?: "", pendingDescription ?: "", pendingCreatedAt ?: 0)
+				isVideoWasJustCreated = false
+			},
+		)
+	}
 
 	if (isEditingDescription) {
 		EditDescriptionDialog(
