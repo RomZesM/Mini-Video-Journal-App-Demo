@@ -2,6 +2,8 @@ plugins {
 	alias(libs.plugins.android.application)
 	alias(libs.plugins.kotlin.android)
 	alias(libs.plugins.kotlin.compose)
+	alias(libs.plugins.ksp)
+	alias(libs.plugins.sqldelight)
 }
 
 android {
@@ -28,11 +30,11 @@ android {
 		}
 	}
 	compileOptions {
-		sourceCompatibility = JavaVersion.VERSION_11
-		targetCompatibility = JavaVersion.VERSION_11
+		sourceCompatibility = JavaVersion.VERSION_17
+		targetCompatibility = JavaVersion.VERSION_17
 	}
 	kotlinOptions {
-		jvmTarget = "11"
+		jvmTarget = "17"
 	}
 	buildFeatures {
 		compose = true
@@ -56,4 +58,35 @@ dependencies {
 	androidTestImplementation(libs.androidx.ui.test.junit4)
 	debugImplementation(libs.androidx.ui.tooling)
 	debugImplementation(libs.androidx.ui.test.manifest)
+
+	// For permissions
+	implementation(libs.accompanist.permissions)
+
+	// CameraX
+	implementation(libs.androidx.camera.camera2)
+	implementation(libs.androidx.camera.lifecycle)
+	implementation(libs.androidx.camera.view)
+	implementation(libs.androidx.camera.video)
+
+	//Compose navigation
+	implementation(libs.androidx.navigation.compose)
+
+	//SQL delight
+	implementation(libs.android.driver)
+	implementation(libs.coroutines.extensions)
+
+	//Coroutines
+	implementation(libs.kotlinx.coroutines.core)
+	implementation(libs.kotlinx.coroutines.android)
+
+	//ExoPlayer
+	implementation(libs.androidx.media3.exoplayer)
+	implementation(libs.androidx.media3.ui)
+
+	// Koin for Android
+	implementation(libs.koin.android)
+	implementation(libs.koin.androidx.compose)
+	testImplementation(libs.koin.test.junit4)
+
 }
+
