@@ -11,6 +11,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.example.minivideojournalapp.ui.theme.LocalExtendedColors
 
 @Composable
 fun EditDescriptionDialog(
@@ -18,6 +19,7 @@ fun EditDescriptionDialog(
 	onConfirm: (String) -> Unit,
 	onDismiss: () -> Unit
 ) {
+	val extendedColors = LocalExtendedColors.current
 	var text by remember { mutableStateOf(currentDescription) }
 
 	AlertDialog(
@@ -41,6 +43,7 @@ fun EditDescriptionDialog(
 				singleLine = false,
 				modifier = Modifier.fillMaxWidth()
 			)
-		}
+		},
+		containerColor = extendedColors.bgCard
 	)
 }
