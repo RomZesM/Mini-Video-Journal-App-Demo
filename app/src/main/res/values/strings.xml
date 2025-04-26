@@ -6,4 +6,12 @@
     <string name="permission_alert_button_title_cancel">Cancel</string>"
     <string name="image_not_found">Image not found</string>"
     <string name="add_new_video_content_description">Add New Video</string>"
+    <string name="edit_description_save_button">Save</string>
+    <string name="edit_description_cancel_button">Cancel</string>
+    <string name="edit_description_title">Edit Description</string>
+    <string name="edit_description_label">Description</string>
+    <string name="edit_button_content_description">Edit description button</string>
+    <string name="template_recorded_at">Recorded at %s</string>
+
+
 </resources>

@@ -67,10 +67,12 @@ import com.example.minivideojournalapp.ui.theme.LocalExtendedColors
 import org.koin.androidx.compose.koinViewModel
 import java.io.File
 import java.io.FileInputStream
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun MainScreen() {
-	Text("Main Screen")
 
 	val viewModel = koinViewModel<MainScreenViewModel>()
 
@@ -113,7 +115,8 @@ fun MainScreen() {
 			val path = getPathFromUri(context, uri)
 			val createdAt = System.currentTimeMillis()
 			if (path != null) {
-				pendingDescription = "Recorded at $createdAt"
+				pendingDescription =
+					context.getString(R.string.template_recorded_at, formatDate(createdAt))
 				pendingVideoPath = path
 				pendingCreatedAt = createdAt
 				isVideoWasJustCreated = true
@@ -278,7 +281,7 @@ fun CameraScreenContent(
 								)
 								Spacer(Modifier.width(8.dp))
 								Text(
-									text = "22.12.2025 13.22",
+									text = formatDate(video.createdAt),
 									fontWeight = FontWeight.SemiBold,
 									color = extendedColors.textSecondary,
 									fontSize = 12.sp
@@ -295,13 +298,12 @@ fun CameraScreenContent(
 							) {
 								Icon(
 									Icons.Default.Create,
-									contentDescription = "Edit description",
+									contentDescription = stringResource(R.string.edit_button_content_description),
 									tint = extendedColors.buttonColors
 								)
 							}
 
 						}
-
 					}
 				}
 			}
@@ -341,6 +343,10 @@ fun getPathFromUri(context: Context, uri: Uri): String? {
 	return null
 }
 
+fun formatDate(timestamp: Long): String {
+	val formatter = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault())
+	return formatter.format(Date(timestamp))
+}
 
 @Preview
 @Composable

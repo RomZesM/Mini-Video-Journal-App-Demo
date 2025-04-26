@@ -11,6 +11,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.example.minivideojournalapp.R
 import com.example.minivideojournalapp.ui.theme.LocalExtendedColors
 
 @Composable
@@ -26,20 +28,20 @@ fun EditDescriptionDialog(
 		onDismissRequest = onDismiss,
 		confirmButton = {
 			TextButton(onClick = { onConfirm(text) }) {
-				Text("Save")
+				Text(stringResource(R.string.edit_description_save_button))
 			}
 		},
 		dismissButton = {
 			TextButton(onClick = onDismiss) {
-				Text("Cancel")
+				Text(stringResource(R.string.edit_description_cancel_button))
 			}
 		},
-		title = { Text("Edit Description") },
+		title = { Text(stringResource(R.string.edit_description_title))},
 		text = {
 			OutlinedTextField(
 				value = text,
 				onValueChange = { text = it },
-				label = { Text("Description") },
+				label = { stringResource(R.string.edit_description_label) },
 				singleLine = false,
 				modifier = Modifier.fillMaxWidth()
 			)
